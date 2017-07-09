@@ -1,0 +1,17 @@
+House:Bob
+Kettle:25
+ElectricCooker:
+ElectricShower:
+TV:
+Refrigerator:
+WashingMachine:3,0,2
+Person:Dave,35,M
+Shower:28
+Cook:30
+DoWashing:40
+House:Mop
+Person:Fiona,4,F
+TurnOnTV:33
+TurnOffTV:36
+Cook:45
+Shower:48
