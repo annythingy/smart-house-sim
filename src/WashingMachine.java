@@ -1,14 +1,11 @@
-/**
- * Created by Kikina on 20/05/2017.
- */
 public class WashingMachine extends Appliance {
 
-    public WashingMachine(int elUse, int gasUse, int watUse){
-        super(elUse, gasUse,watUse,8);
+    public WashingMachine(int elUse, int gasUse, int watUse) {
+        super(elUse, gasUse, watUse, 8);
     }
-    
-    public  WashingMachine(){
-        super(2,0,1,8);
+
+    public WashingMachine() {
+        super(2, 0, 1, 8);
     }
 
     @Override
@@ -16,8 +13,9 @@ public class WashingMachine extends Appliance {
         doWashing();
     }
 
-    public void doWashing() {
+    private void doWashing() {
         turnOn();
+        log.addRow("Washing machine WAshEnMaSCheN!!!\n");
     }
 
 }

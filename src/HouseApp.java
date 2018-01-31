@@ -2,43 +2,37 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
-/**
- * Created by Kikina on 20/05/2017.
- */
 public class HouseApp extends JFrame {
 
-    ArrayList<House> houses;
+    private ArrayList<House> houses;
 
-    public HouseApp() throws Exception {
+    private HouseApp() throws Exception {
         super("This is cute");
         houses = new ArrayList<>();
         setSize(600, 500);
         addInfo();
         addComponents();
         centreWindow(this);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
 
     public static void main(String[] args) {
         try {
-            //
-
             HouseApp app = new HouseApp();
             app.setVisible(true);
 
-            //HouseGenerator bob = new HouseGenerator(args[1]);
-            //House houseOne = bob.parseHouse();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void addInfo() throws Exception {
+    private void addInfo() throws Exception {
         HouseGenerator generator = new HouseGenerator("src/config.txt");
-        houses = generator.parseFile();
+        if (generator.file.exists()) houses = generator.parseFile();
+        else; //todo create config in the same folder
     }
 
-    public void addComponents() {
+    private void addComponents() {
         JTabbedPane tabs = new JTabbedPane();
         for (House house : houses) {
             tabs.add(house.getHouseholdName(), new HouseTab(house, false));
@@ -47,7 +41,7 @@ public class HouseApp extends JFrame {
         setContentPane(tabs);
     }
 
-    public void centreWindow(Window frame) {
+    private void centreWindow(Window frame) {
         Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
         int x = (int) ((screen.getWidth() - frame.getWidth()) / 2);
         int y = (int) ((screen.getHeight() - frame.getHeight()) / 2);
@@ -56,35 +50,37 @@ public class HouseApp extends JFrame {
 }
 
 class HouseTab extends JPanel {
-    House house;
-    boolean customisable;
-    JPanel peoplePanel;
-    LogPanel logPanel;
-    JLabel[] meterLabels;
-    JPanel meterPanel;
-    JLabel valueNames;
-    JLabel valueNumbers;
+    private House house;
+    private boolean customisable;
+    private JPanel peoplePanel;
+    private JPanel appliancePanel;
+    private JLabel[] meterLabels;
+    private JLabel valueNames;
+    private JLabel valueNumbers;
 
-    public HouseTab(House house, boolean customisable) {
+    HouseTab(House house, boolean customisable) {
         this.house = house;
         this.customisable = customisable;
         setLayout(new BorderLayout());
-        JPanel panel = new JPanel();
         JTextArea textArea = new JTextArea();
-        logPanel = new LogPanel(this, house, textArea);
+        LogPanel logPanel = new LogPanel(this, house, textArea);
         house.setLogPanel(logPanel);
+        house.setTab(this);
+        for (Appliance app : house.getAppliances()) {
+            app.setTab(this);
+        }
         add(logPanel, BorderLayout.CENTER);
         addComponents();
     }
 
-    public void addComponents() {
+    private void addComponents() {
         addGo();
         addPeople();
         addMeters();
         addAppliances();
     }
 
-    public void addGo() {
+    private void addGo() {
         JPanel up = new JPanel();
         JPanel goPanel = new JPanel(new BorderLayout());
         JPanel timePanel = new JPanel(new GridLayout(2, 1));
@@ -94,7 +90,7 @@ class HouseTab extends JPanel {
         valueNames = new JLabel("<html>" + "Day:" + "<br>Hour:" + "<br>Electricity Use:" + "<br>Gas Use:" + "<br>Water Use:" + "</html>");
         valueNumbers = new JLabel("<html>" + "------" + "<br>" + "------" + "<br>" + "------" + "<br>" + "------" + "<br>" + "------" + "</html>");
         JTextField time = new JTextField(5);
-        SpinnerModel hoursModel = new SpinnerNumberModel(6, 1, 24, 1);
+        SpinnerModel hoursModel = new SpinnerNumberModel(12, 1, 24, 1);
         JSpinner hours = new JSpinner(hoursModel);
         time.setFont(new Font(getFont().getName(), Font.BOLD, 10));
         time.setPreferredSize(new Dimension(20, 20));
@@ -102,14 +98,14 @@ class HouseTab extends JPanel {
         timePanel.add(hours);
         goPanel.add(timePanel, BorderLayout.WEST);
         goPanel.add(go, BorderLayout.CENTER);
-        go.addActionListener(e -> house.go(this, (Integer) hours.getValue()));
+        go.addActionListener(e -> house.go(this, (Integer) hoursModel.getValue()*4));
         up.add(goPanel);
         up.add(valueNames);
         up.add(valueNumbers);
         add(up, BorderLayout.NORTH);
     }
 
-    public void addPeople() {
+    private void addPeople() {
         JPanel panel = new JPanel(new BorderLayout());
         peoplePanel = new JPanel();
         JButton addPerson = new JButton("<html>Add a<br>family<br>member</html>");
@@ -130,8 +126,8 @@ class HouseTab extends JPanel {
         add(panel, BorderLayout.WEST);
     }
 
-    void addMeters() {
-        meterPanel = new JPanel();
+    private void addMeters() {
+        JPanel meterPanel = new JPanel();
         meterLabels = new JLabel[3];
 
         for (int i = 0; i < 3; i++) {
@@ -142,8 +138,8 @@ class HouseTab extends JPanel {
         add(meterPanel, BorderLayout.SOUTH);
     }
 
-    public void addAppliances() {
-        JPanel appliancePanel = new JPanel();
+    private void addAppliances() {
+        appliancePanel = new JPanel();
         appliancePanel.setLayout(new GridLayout(house.numAppliances(), 1));
         JButton addAppliance = new JButton("<html>Add a new<br>appliance</html>");
 
@@ -155,7 +151,18 @@ class HouseTab extends JPanel {
         add(appliancePanel, BorderLayout.EAST);
     }
 
-    public void addNewPerson() {
+    void switchColour(Appliance app, boolean turning) {
+        for (Component x : appliancePanel.getComponents()) {
+            if (((JLabel) x).getText().contains(app.getClass().getName())) {
+                if (!turning) x.setForeground(Color.BLUE);
+                else x.setForeground(Color.darkGray);//todo set text back to normal at switch off
+            }
+        }
+        revalidate();
+        repaint();
+    }
+
+    private void addNewPerson() {
         JDialog popup = new JDialog();
         popup.setSize(300, 150);
 
@@ -192,7 +199,7 @@ class HouseTab extends JPanel {
         });
     }
 
-    public void addNewTask() {
+    private void addNewTask() {
         JDialog popup = new JDialog();
         popup.setSize(300, 150);
 
@@ -216,41 +223,32 @@ class HouseTab extends JPanel {
         });
     }
 
-    public LogPanel getLogPanel() {
-        return logPanel;
-    }
-
-    public JLabel[] getMeterLabels() {
+    JLabel[] getMeterLabels() {
         return meterLabels;
     }
 
-    public JPanel getMeterPanel() {
-        return meterPanel;
-    }
-
-    public JLabel getValueNames() {
+    JLabel getValueNames() {
         return valueNames;
     }
 
-    public JLabel getValueNumbers() {
+    JLabel getValueNumbers() {
         return valueNumbers;
     }
 }
 
 class LogPanel extends JScrollPane {
 
-    HouseTab tab;
-    House house;
-    JPanel panel;
+    private HouseTab tab;
+    private House house;
 
-    public JTextArea getTextArea() {
+    JTextArea getTextArea() {
         return textArea;
     }
 
-    JTextArea textArea;
-    ArrayList<JLabel> rows;
+    private JTextArea textArea;
+    private ArrayList<JLabel> rows;
 
-    public LogPanel(HouseTab tab, House house, JTextArea textArea) {
+    LogPanel(HouseTab tab, House house, JTextArea textArea) {
         super(textArea);
         this.textArea = textArea;
         this.tab = tab;
@@ -263,14 +261,14 @@ class LogPanel extends JScrollPane {
         addComponents();
     }
 
-    public void addComponents() {
+    private void addComponents() {
         textArea.setEditable(false);
         //DefaultCaret caret = (DefaultCaret) textArea.getCaret();
         //caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
         textArea.setText("Here we go:\n");
     }
 
-    public void addRow(String text) {
+    void addRow(String text) {
         textArea.append(text);
         textArea.paintImmediately(textArea.getVisibleRect());
         textArea.setCaretPosition(textArea.getDocument().getLength());

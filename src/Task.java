@@ -1,6 +1,3 @@
-/**
- * Created by Kikina on 20/05/2017.
- */
 public enum Task {
     BOIL(Kettle.class, "Boil"),
     COOK(Cooker.class, "Cook"),
@@ -29,7 +26,7 @@ public enum Task {
         this.switchState = switchState;
     }
 
-    public void doTask(House house) {
+    public void doTask(House house) { //todo add message to the log if appliance isn't found
         for (Appliance appliance : house.getAppliances()) {
             if (appClass.isInstance(appliance)) {
                 if (appliance.getTimeUse() > 0) appliance.use();

@@ -1,40 +1,20 @@
-/**
- * Created by Kikina on 20/05/2017.
- */
 public abstract class Appliance {
 
-    public void setLog(LogPanel log) {
-        this.log = log;
-    }
-
-    public LogPanel getLog() {
-        return log;
-    }
-
+    boolean renewable;
+    int electricityProduction;
+    int gasProduction;
+    int waterProduction;
+    private HouseTab tab;
     LogPanel log;
-    ElectricMeter elMeter;
-    WaterMeter waterMeter;
-    GasMeter gasMeter;
-    protected boolean renewable;
+    private ElectricMeter elMeter;
+    private WaterMeter waterMeter;
+    private GasMeter gasMeter;
     private int electricityUse;
     private int gasUse;
     private int waterUse;
-    protected int electricityProduction;
-    protected int gasProduction;
-    protected int waterProduction;
     private int timeOn;
     private int timeUse;
-
-    public boolean isCurrentState() {
-        return currentState;
-    }
-
     private boolean currentState;
-    public void setHouse(House house) {
-        this.house = house;
-    }
-
-    House house;
 
     public Appliance(int electricityUse, int gasUse, int waterUse, int timeUse) {
         this.electricityUse = electricityUse;
@@ -43,7 +23,23 @@ public abstract class Appliance {
         this.timeUse = timeUse;
     }
 
-    public void timePasses() {
+    LogPanel getLog() {
+        return log;
+    }
+
+    void setLog(LogPanel log) {
+        this.log = log;
+    }
+
+    void setTab(HouseTab tab) {
+        this.tab = tab;
+    }
+
+    boolean isCurrentState() {
+        return currentState;
+    }
+
+    void timePasses() {
         if (currentState) {
             elMeter.incrementConsumed(electricityUse);
             gasMeter.incrementConsumed(gasUse);
@@ -62,32 +58,34 @@ public abstract class Appliance {
         }
     }
 
-    public void turnOn() {
+    void turnOn() {
+        if (tab != null) tab.switchColour(this, true);
         currentState = true;
-
 
     }
 
-    public void turnOff() {
+    void turnOff() {
+        tab.switchColour(this, false);
         currentState = false;
         timeOn = 0;
+
     }
 
     public abstract void use();
 
-    public int getTimeUse() {
+    int getTimeUse() {
         return timeUse;
     }
 
-    public void setElMeter(ElectricMeter elMeter) {
+    void setElMeter(ElectricMeter elMeter) {
         this.elMeter = elMeter;
     }
 
-    public void setWaterMeter(WaterMeter waterMeter) {
+    void setWaterMeter(WaterMeter waterMeter) {
         this.waterMeter = waterMeter;
     }
 
-    public void setGasMeter(GasMeter gasMeter) {
+    void setGasMeter(GasMeter gasMeter) {
         this.gasMeter = gasMeter;
     }
 

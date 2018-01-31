@@ -1,12 +1,10 @@
 import javax.swing.*;
 import java.util.ArrayList;
 
-/**
- * Created by Kikina on 20/05/2017.
- */
 public class House {
 
-    LogPanel logPanel;
+    private HouseTab tab;
+    private LogPanel logPanel;
     private String householdName;
     private ElectricMeter electricMeter;
     private GasMeter gasMeter;
@@ -34,38 +32,39 @@ public class House {
         return daysPassed;
     }
 
-    public String getHouseholdName() {
+    String getHouseholdName() {
         return householdName;
     }
 
-    public Meter[] getMeters() {
+    Meter[] getMeters() {
         return meters;
     }
 
-    public ArrayList<Person> getFamily() {
+    ArrayList<Person> getFamily() {
         return family;
     }
 
-    public void go() {
-        int day = 96;
-        try {
-            System.out.println("DAY 1");
-            timePasses(day);
-        } catch (InterruptedException e) {
-        }
-    }
+//    public void go() {
+//        int day = 96;
+//        try {
+//            System.out.println("DAY 1");
+//            timePasses(day);
+//        } catch (InterruptedException ignored) {
+//        }
+//    }
 
-    public void go(HouseTab tab, int time) {
-        int day = 96;
+    void go(HouseTab tab, int time) {
         try {
             tab.revalidate();
             tab.repaint();
-            timePasses(time*4, tab);
-        } catch (InterruptedException e) {
+            timePasses(time, tab);
+            tab.revalidate();
+            tab.repaint();
+        } catch (InterruptedException ignored) {
         }
     }
 
-    public void timePasses(int time) throws InterruptedException {
+    private void timePasses(int time) throws InterruptedException {
         for (int i = 0; i < time; i++) {
             for (Person pal : family) pal.timePasses();
             for (Appliance app : appliances) app.timePasses();
@@ -79,7 +78,7 @@ public class House {
         }
     }
 
-    public void timePasses(int time, HouseTab tab) throws InterruptedException {
+    private void timePasses(int time, HouseTab tab) throws InterruptedException {
         for (int i = 0; i < time; i++) {
             for (Person pal : family) pal.timePasses();
             for (Appliance app : appliances) app.timePasses();
@@ -93,7 +92,7 @@ public class House {
         }
     }
 
-    public void monitorUsage() {
+    private void monitorUsage() {
         if (timePassed == 96) System.out.println("DAY " + daysPassed);
         if (timePassed % 4 == 0) {
             System.out.println("Hour " + timePassed / 4 + ":");
@@ -103,7 +102,7 @@ public class House {
         }
     }
 
-    public void monitorUsage(HouseTab tab) {
+    private void monitorUsage(HouseTab tab) {
         if (timePassed == 96) System.out.println("DAY " + daysPassed);
         if (timePassed % 4 == 0) {
             setText(tab.getValueNames(), "<html>" + "Day:" + "<br>Hour:" + "<br>Electricity Use:" + "<br>Gas Use:" + "<br>Water Use:" + "</html>");
@@ -124,14 +123,13 @@ public class House {
         label.paintImmediately(label.getVisibleRect());
     }
 
-    public void addPerson(Person pal) {
+    void addPerson(Person pal) {
         family.add(pal);
     }
 
-    public void addAppliance(Appliance app) throws Exception {
+    void addAppliance(Appliance app) throws Exception {
         if (appliances.size() < 25) {
             appliances.add(app);
-            app.setHouse(this);
             app.setElMeter(getElectricMeter());
             app.setGasMeter(getGasMeter());
             app.setWaterMeter(getWaterMeter());
@@ -143,44 +141,35 @@ public class House {
         throw new Exception("It wasn't here to begin with.");
     }
 
-    public ArrayList<Appliance> getAppliances() {
+    ArrayList<Appliance> getAppliances() {
         return appliances;
     }
 
-    public int getTimePassed() {
+    int getTimePassed() {
         return timePassed;
     }
 
-    public int numAppliances() {
+    int numAppliances() {
         return appliances.size();
     }
 
-    public void addMeter(Meter meter) {
-        if (meter instanceof ElectricMeter) {
-            this.electricMeter = (ElectricMeter) meter;
-            meters[0] = meter;
-        } else if (meter instanceof GasMeter) {
-            this.gasMeter = (GasMeter) meter;
-            meters[1] = meter;
-        } else if (meter instanceof WaterMeter) {
-            this.waterMeter = (WaterMeter) meter;
-            meters[2] = meter;
-        }
-    }
-
-    public ElectricMeter getElectricMeter() {
+    private ElectricMeter getElectricMeter() {
         return electricMeter;
     }
 
-    public GasMeter getGasMeter() {
+    private GasMeter getGasMeter() {
         return gasMeter;
     }
 
-    public WaterMeter getWaterMeter() {
+    private WaterMeter getWaterMeter() {
         return waterMeter;
     }
 
-    public void setLogPanel(LogPanel logPanel) {
+    void setLogPanel(LogPanel logPanel) {
         this.logPanel = logPanel;
+    }
+
+    void setTab(HouseTab tab) {
+        this.tab = tab;
     }
 }

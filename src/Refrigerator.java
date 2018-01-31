@@ -1,6 +1,4 @@
-/**
- * Created by Kikina on 20/05/2017.
- */
+
 public class Refrigerator extends Appliance {
 
     public Refrigerator(int elUse, int gasUse, int watUse) {
@@ -9,11 +7,11 @@ public class Refrigerator extends Appliance {
 
     public Refrigerator() {
         super(1, 0, 0, -1);
-        turnOn();
+        //turnOn();
     }
 
     @Override
     public void use() {
-
+        //todo
     }
 }

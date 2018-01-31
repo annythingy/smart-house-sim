@@ -1,8 +1,4 @@
-/**
- * Created by Kikina on 23/05/2017.
- */
 public class SolarPanel extends Appliance {
-
 
     public SolarPanel() {
         super(0, 0, 0, -1);
@@ -18,7 +14,8 @@ public class SolarPanel extends Appliance {
         sunlightMagic();
     }
 
-    public void sunlightMagic() {
+    private void sunlightMagic() {
         turnOn();
+        //todo
     }
 }

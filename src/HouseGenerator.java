@@ -1,19 +1,16 @@
 import java.io.*;
 import java.util.ArrayList;
 
-/**
- * Created by Kikina on 20/05/2017.
- */
-public class HouseGenerator {
+class HouseGenerator {
 
     File file;
-    BufferedReader bfr;
-    ArrayList<House> houses;
-    House currentHouse;
-    Person currentPerson;
-    String[] appNames = {"Boiler", "Dishwasher", "ElectricCooker", "ElectricShower", "GasCooker", "Kettle", "NightLight", "PowerShower", "Refrigerator", "TV", "WashingMachine"};
+    private BufferedReader bfr;
+    private ArrayList<House> houses;
+    private House currentHouse;
+    private Person currentPerson;
+    private String[] appNames = {"Boiler", "Dishwasher", "ElectricCooker", "ElectricShower", "GasCooker", "Kettle", "NightLight", "PowerShower", "Refrigerator", "TV", "WashingMachine"};
 
-    public HouseGenerator(String path) {
+    HouseGenerator(String path) {
         this.file = new File(path);
         try {
             bfr = new BufferedReader(new FileReader((path)));
@@ -23,7 +20,7 @@ public class HouseGenerator {
         }
     }
 
-    public ArrayList<House> parseFile() {
+    ArrayList<House> parseFile() {
         String line;
         try {
             while ((line = bfr.readLine()) != null) {
@@ -38,7 +35,9 @@ public class HouseGenerator {
                     parsePerson(columns);
                 } else if (isTask(type)) {
                     parseTask(columns);
-                } else throw new Exception("Bad type");
+                } else if (isComment(type)) {
+
+                } else throw new Exception("Bad type " + type);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -46,12 +45,12 @@ public class HouseGenerator {
         return houses;
     }
 
-    public void parseHouse(String[] columns) {
+    private void parseHouse(String[] columns) {
         currentHouse = new House(columns[1]);
         houses.add(currentHouse);
     }
 
-    public void parseAppliance(String[] columns) throws Exception {
+    private void parseAppliance(String[] columns) throws Exception {
         int elUse = 0;
         int gasUse = 0;
         int watUse = 0;
@@ -74,54 +73,54 @@ public class HouseGenerator {
         switch (columns[0]) {
             case "Boiler":
                 if (values.length == 0) currentHouse.addAppliance(new Boiler());
-                else currentHouse.addAppliance(new Boiler(elUse,gasUse,watUse));
+                else currentHouse.addAppliance(new Boiler(elUse, gasUse, watUse));
                 break;
             case "Dishwasher":
                 if (values.length == 0) currentHouse.addAppliance(new Dishwasher());
-                else currentHouse.addAppliance(new Dishwasher(elUse,gasUse,watUse));
+                else currentHouse.addAppliance(new Dishwasher(elUse, gasUse, watUse));
                 break;
             case "ElectricCooker":
                 if (values.length == 0) currentHouse.addAppliance(new ElectricCooker());
-                else currentHouse.addAppliance(new ElectricCooker(elUse,gasUse,watUse));
+                else currentHouse.addAppliance(new ElectricCooker(elUse, gasUse, watUse));
                 break;
             case "ElectricShower":
                 if (values.length == 0) currentHouse.addAppliance(new ElectricShower());
-                else currentHouse.addAppliance(new ElectricShower(elUse,gasUse,watUse));
+                else currentHouse.addAppliance(new ElectricShower(elUse, gasUse, watUse));
                 break;
             case "GasCooker":
                 if (values.length == 0) currentHouse.addAppliance(new GasCooker());
-                else currentHouse.addAppliance(new GasCooker(elUse,gasUse,watUse));
+                else currentHouse.addAppliance(new GasCooker(elUse, gasUse, watUse));
                 break;
             case "Kettle":
                 if (values.length == 0) currentHouse.addAppliance(new Kettle());
-                else currentHouse.addAppliance(new Kettle(elUse,gasUse,watUse));
+                else currentHouse.addAppliance(new Kettle(elUse, gasUse, watUse));
                 break;
             case "NightLight":
                 if (values.length == 0) currentHouse.addAppliance(new NightLight());
-                else currentHouse.addAppliance(new NightLight(elUse,gasUse,watUse));
+                else currentHouse.addAppliance(new NightLight(elUse, gasUse, watUse));
                 break;
             case "PowerShower":
                 if (values.length == 0) currentHouse.addAppliance(new PowerShower());
-                else currentHouse.addAppliance(new PowerShower(elUse,gasUse,watUse));
+                else currentHouse.addAppliance(new PowerShower(elUse, gasUse, watUse));
                 break;
             case "Refrigerator":
                 if (values.length == 0) currentHouse.addAppliance(new Refrigerator());
-                else currentHouse.addAppliance(new Refrigerator(elUse,gasUse,watUse));
+                else currentHouse.addAppliance(new Refrigerator(elUse, gasUse, watUse));
                 break;
             case "TV":
                 if (values.length == 0) currentHouse.addAppliance(new TV());
-                else currentHouse.addAppliance(new TV(elUse,gasUse,watUse));
+                else currentHouse.addAppliance(new TV(elUse, gasUse, watUse));
                 break;
             case "WashingMachine":
                 if (values.length == 0) currentHouse.addAppliance(new WashingMachine());
-                else currentHouse.addAppliance(new WashingMachine(elUse,gasUse,watUse));
+                else currentHouse.addAppliance(new WashingMachine(elUse, gasUse, watUse));
                 break;
             default:
                 throw new Exception("BAD");
         }
     }//todo
 
-    public void parsePerson(String[] info) throws Exception {
+    private void parsePerson(String[] info) throws Exception {
         String[] params = info[1].split(",");
         if (Integer.parseInt(params[1]) >= 18)
             currentPerson = new GrownUp(params[0], Integer.parseInt(params[1]), params[2].charAt(0), currentHouse);
@@ -129,31 +128,33 @@ public class HouseGenerator {
             currentPerson = new Child(params[0], Integer.parseInt(params[1]), params[2].charAt(0), currentHouse);
     }
 
-    public void parseTask(String[] info) {
+    private void parseTask(String[] info) {
         currentPerson.addTask(Task.valueOf(info[0].toUpperCase()), Integer.parseInt(info[1]));
     }//todo No task/time clashes Exception
 
-    public boolean isHouse(String type) {
-        if (type.equals("House")) return true;
-        return false;
+    private boolean isHouse(String type) {
+        return type.equals("House");
     }
 
-    public boolean isAppliance(String type) {
+    private boolean isAppliance(String type) {
         for (String appName : appNames) {
             if (type.equals(appName)) return true;
         }
         return false;
     }
 
-    public boolean isPerson(String type) {
-        if (type.equals("Person")) return true;
-        return false;
+    private boolean isPerson(String type) {
+        return type.equals("Person");
     }
 
-    public boolean isTask(String type) {
+    private boolean isTask(String type) {
         for (Task task : Task.values()) {
             if (type.equals(task.getTaskName())) return true;
         }
         return false;
+    }
+
+    private boolean isComment(String type) {
+        return (type.toCharArray().length == 0 || type.toCharArray()[0] == '#');
     }
 }

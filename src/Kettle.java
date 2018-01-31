@@ -1,8 +1,3 @@
-import javax.swing.*;
-
-/**
- * Created by Kikina on 20/05/2017.
- */
 public class Kettle extends Appliance {
     
     public Kettle(int elUse, int gasUse, int watUse){
@@ -18,7 +13,7 @@ public class Kettle extends Appliance {
         boil();
     }
 
-    public void boil() {
+    private void boil() {
         turnOn();
         log.addRow("Kettle Kettling!!!\n");
     }
